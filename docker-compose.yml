@@ -1,0 +1,26 @@
+# docker-compose.yml
+
+version: '3.8'
+
+services:
+  easyconnect:
+    image: hagb/docker-easyconnect:cli
+    container_name: easyconnect
+    restart: always
+    env_file:
+      - .env
+    devices:
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    tty: true
+    stdin_open: true
+    # 端口映射 (主机:容器)
+    # 将容器的 1080 端口映射到主机的 1080 (SOCKS5 代理)
+    # 将容器的 8888 端口映射到主机的 8888 (HTTP 代理)
+    ports:
+      - "0.0.0.0:1080:1080"
+      - "0.0.0.0:8888:8888"
+    environment:
+      - EC_VER=${VPN_VER}
+      - CLI_OPTS=-d ${VPN_ADDRESS} -u ${VPN_USERNAME} -p ${VPN_PASSWORD}
